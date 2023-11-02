@@ -2,19 +2,63 @@
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0, 1.0, 1.0);
+    glColor3f(1.0, 1.0, 0.0); // Set color to purple
     glLoadIdentity();
 
     // Set the camera position and orientation
-    gluLookAt(4.0, 4.0, 4.9, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+    gluLookAt(9.0, 6.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-    // Draw the cube wireframe
-    glutWireCube(2.0);
+    // Draw the cube wireframe manually
+    glBegin(GL_LINES);
 
-    glFlush();
+    // Front face
+    glVertex3f(-0.9f, -0.9f, 0.9f);
+    glVertex3f(0.9f, -0.9f, 0.9f);
+
+    glVertex3f(0.9f, -0.9f, 0.9f);
+    glVertex3f(0.9f, 0.9f, 0.9f);
+
+    glVertex3f(0.9f, 0.9f, 0.9f);
+    glVertex3f(-0.9f, 0.9f, 0.9f);
+
+    glVertex3f(-0.9f, 0.9f, 0.9f);
+    glVertex3f(-0.9f, -0.9f, 0.9f);
+
+    // Back face
+    glVertex3f(-0.9f, -0.9f, -0.9f);
+    glVertex3f(0.9f, -0.9f, -0.9f);
+
+    glVertex3f(0.9f, -0.9f, -0.9f);
+    glVertex3f(0.9f, 0.9f, -0.9f);
+
+    glVertex3f(0.9f, 0.9f, -0.9f);
+    glVertex3f(-0.9f, 0.9f, -0.9f);
+
+    glVertex3f(-0.9f, 0.9f, -0.9f);
+    glVertex3f(-0.9f, -0.9f, -0.9f);
+
+    // Connecting lines
+    glVertex3f(-0.9f, -0.9f, 0.9f);
+    glVertex3f(-0.9f, -0.9f, -0.9f);
+
+    glVertex3f(0.9f, -0.9f, 0.9f);
+    glVertex3f(0.9f, -0.9f, -0.9f);
+
+    glVertex3f(0.9f, 0.9f, 0.9f);
+    glVertex3f(0.9f, 0.9f, -0.9f);
+
+    glVertex3f(-0.9f, 0.9f, 0.9f);
+    glVertex3f(-0.9f, 0.9f, -0.9f);
+
+    glEnd();
+
+    glutSwapBuffers();
 }
 
+// The reshape and main functions remain the same.
+
 void reshape(int w, int h) {
+
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
