@@ -1,137 +1,88 @@
-#include <GL/freeglut.h>
-#include <iostream> 
+#include <GL/glut.h>
+#include <string>
 
-
-// Define cube vertices and indices
-GLfloat vertices[] = {
-    -0.2f, -0.2f, -0.2f,
-     0.2f, -0.2f, -0.2f,
-     0.2f,  0.2f, -0.2f,
-    -0.2f,  0.2f, -0.2f,
-    -0.2f, -0.2f,  0.2f,
-     0.2f, -0.2f,  0.2f,
-     0.2f,  0.2f,  0.2f,
-    -0.2f,  0.2f,  0.2f
-};
-
-GLuint indices[] = {
-    0, 1, 2,
-    2, 3, 0,
-    4, 5, 6,
-    6, 7, 4,
-    0, 4, 7,
-    7, 3, 0,
-    1, 5, 6,
-    6, 2, 1,
-    3, 2, 6,
-    6, 7, 3,
-    0, 1, 5,
-    5, 4, 0
-};
-GLfloat colors[] = {
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f, // YELLOW
-    1.0f, 0.5f, 0.0f  // YELLOW
-};
-
-// Rotation angles
-
-GLfloat angleX = 0.0f;
-GLfloat angleY = 0.0f;
-GLfloat angleZ = 0.0f;
-
-GLfloat rotationSpeed = 12.0f; // Adjust the rotation speed as needed
+float angleX = 0.0f;
+float angleY = 0.0f;
+float rotationStep = 2.0f;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -2.0f);
+    gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
     glRotatef(angleX, 1.0f, 0.0f, 0.0f);
     glRotatef(angleY, 0.0f, 1.0f, 0.0f);
-    glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
 
-    // Draw cube
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glColorPointer(3, GL_FLOAT, 0, colors);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, indices);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.5f); // Transparent white
+
+    // Draw the wireframe cube
+    glutWireCube(1.0);
+
+    glDisable(GL_BLEND);
+
+    // Draw labels for the vertices
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRasterPos3f(-0.8f, -0.8f, -0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'A');
+    glRasterPos3f(0.8f, -0.8f, -0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'B');
+    glRasterPos3f(0.8f, 0.8f, -0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
+    glRasterPos3f(-0.8f, 0.8f, -0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'D');
+    glRasterPos3f(-0.8f, -0.8f, 0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'E');
+    glRasterPos3f(0.8f, -0.8f, 0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'F');
+    glRasterPos3f(0.8f, 0.8f, 0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'G');
+    glRasterPos3f(-0.8f, 0.8f, 0.8f);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'H');
 
     glutSwapBuffers();
 }
 
-void reshape(int width, int height) {
-    glViewport(0, 0, width, height);
+void specialKeys(int key, int x, int y) {
+    switch (key) {
+    case GLUT_KEY_UP:
+        angleX += rotationStep;
+        break;
+    case GLUT_KEY_DOWN:
+        angleX -= rotationStep;
+        break;
+    case GLUT_KEY_LEFT:
+        angleY -= rotationStep;
+        break;
+    case GLUT_KEY_RIGHT:
+        angleY += rotationStep;
+        break;
+    }
+    glutPostRedisplay();
+}
+
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0, (double)width / (double)height, 0.1, 100.0);
-}
-
-//rotation direction flags
-bool rotateclockwiseX = false;
-bool rotateclockwiseY = false;
-bool rotateclockwiseZ = false;
-
-
-
-void keyboard(unsigned char key, int x, int y) {
-    if (key == 'x' || key == 'X') {
-        rotateclockwiseX = !rotateclockwiseX;
-    }
-    if (key == 'y' || key == 'Y') {
-        rotateclockwiseY = !rotateclockwiseY;
-    }
-    if (key == 'z' || key == 'Z') {
-        rotateclockwiseZ = !rotateclockwiseZ;
-    }
-}
-void idle()
-{
-    static int previousTime = glutGet(GLUT_ELAPSED_TIME);
-    int currentTime = glutGet(GLUT_ELAPSED_TIME);
-    float deltaTime = (currentTime - previousTime) / 1000.0f; // Convert to seconds
-    previousTime = currentTime;
-    if (rotateclockwiseX) {
-        angleX += rotationSpeed * deltaTime;
-
-    }
-
-    if (rotateclockwiseY) {
-        angleY += rotationSpeed * deltaTime;
-
-    }
-    if (rotateclockwiseZ) {
-        float rotationspeedZ = 15.0f;
-        angleZ += rotationspeedZ * deltaTime;
-
-    }
-
-    glutPostRedisplay();
+    gluPerspective(45.0, (float)w / (float)h, 1.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
-    glutCreateWindow("OpenGL 3D Cube");
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Transparent Wireframe Cube");
 
     glEnable(GL_DEPTH_TEST);
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
-    glutIdleFunc(idle);
-    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialKeys);
 
     glutMainLoop();
-
     return 0;
 }
